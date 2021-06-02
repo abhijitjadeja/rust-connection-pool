@@ -67,14 +67,15 @@ struct Borrowable<T> {
     id: i8,
 }
 
-impl<'a, T> Pool<T> {
-    fn borrow(&'a mut self) -> Option<Borrowable<T>> {
+impl<T> Pool<T> {
+    fn borrow(&mut self) -> Option<Borrowable<T>> {
         let free_list = &mut self.free_list;
         let pool = &mut self.pool;
         let b = pool.pop();
-        let id = b.as_ref().unwrap().id;
-        remove_from_list(free_list, id);
-        self.inuse_list.push(id);
+        if let Some(ref borrowable) = b {
+        remove_from_list(free_list, borrowable.id);
+        self.inuse_list.push(borrowable.id);
+        }
         b
     }
 
